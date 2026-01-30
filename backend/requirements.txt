@@ -1,0 +1,38 @@
+# GenAI Automation Framework - 2026 Final Stable
+# Optimized for Python 3.12 (Standard for 2026)
+
+# Core Framework
+fastapi>=0.128.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.12
+websockets>=13.0
+
+# Database
+sqlalchemy>=2.0.30
+aiosqlite>=0.20.0
+
+# RAG Engine
+faiss-cpu>=1.8.0
+sentence-transformers>=3.0.0
+numpy>=2.0.0
+
+# Ollama Client
+ollama>=0.6.1
+httpx>=0.27.0
+
+# Automation
+playwright>=1.45.0
+appium-python-client>=4.0.0
+
+# Code Analysis & Utilities
+astunparse==1.6.3
+pydantic>=2.12.0
+pydantic-settings>=2.12.0
+python-dotenv>=1.0.1
+uuid6>=2024.7.10
+loguru>=0.7.2
+aiofiles>=24.1.0
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
