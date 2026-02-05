@@ -18,7 +18,7 @@ from app.api.devices import router as devices_router
 from app.api.scripts import router as scripts_router
 from app.api.executions import router as executions_router
 from app.api.system import router as system_router
- from app.api.dashboard import router as dashboard_router
+from app.api.dashboard import router as dashboard_router
 
 
 # Configure logging
@@ -69,6 +69,7 @@ app.add_middleware(
         "http://localhost:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:3000",
+        "http://localhost:8081",
         "tauri://localhost",  # Tauri
     ],
     allow_credentials=True,
@@ -82,7 +83,7 @@ app.include_router(projects_router)
 app.include_router(devices_router)
 app.include_router(scripts_router)
 app.include_router(executions_router)
- app.include_router(dashboard_router)
+app.include_router(dashboard_router)
 
 
 @app.get("/")
