@@ -14,6 +14,8 @@ import type {
   ExecutionRequest,
 } from '@/services/api';
 
+ import type { DashboardStats } from '@/services/api/types';
+ 
 // Query Keys
 export const queryKeys = {
   health: ['health'] as const,
@@ -25,6 +27,7 @@ export const queryKeys = {
   testCase: (id: string) => ['test-cases', 'detail', id] as const,
   executions: (filters?: Record<string, unknown>) => ['executions', filters] as const,
   execution: (id: string) => ['executions', 'detail', id] as const,
+   dashboardStats: (days: number) => ['dashboard-stats', days] as const,
 };
 
 // ============================================================================
@@ -203,3 +206,15 @@ export function useExecutionHistory(filters?: {
     queryFn: () => apiClient.getExecutionHistory(filters),
   });
 }
+ 
+ // ============================================================================
+ // Dashboard Hooks
+ // ============================================================================
+ 
+ export function useDashboardStats(days: number = 30) {
+   return useQuery({
+     queryKey: queryKeys.dashboardStats(days),
+     queryFn: () => apiClient.getDashboardStats(days),
+     refetchInterval: 60000, // Refresh every minute
+   });
+ }

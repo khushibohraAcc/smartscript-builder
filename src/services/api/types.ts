@@ -183,3 +183,15 @@ export interface ApiError {
   detail?: string;
   code?: string;
 }
+ 
+ // Dashboard
+ export interface DashboardStats {
+   total_executions: number;
+   pass_rate: number;
+   failed_tests: number;
+   avg_duration: number;
+   executions_trend: number;
+   pass_rate_trend: number;
+   failed_tests_trend: number;
+   duration_trend: number;
+ }
