@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   LayoutDashboard, 
   Play, 
@@ -9,9 +9,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Cpu,
-  Sparkles
+  Sparkles,
+  Server,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useHealth, useOllamaStatus } from '@/hooks/useApi';
 
 interface NavItem {
   id: string;
@@ -35,6 +38,32 @@ interface SidebarProps {
 
 export function Sidebar({ activeView, onViewChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+   
+   const { data: health, isLoading: healthLoading, error: healthError } = useHealth();
+   const { data: ollamaStatus, isLoading: ollamaLoading, error: ollamaError } = useOllamaStatus();
+   
+   const backendStatus = useMemo(() => {
+     if (healthLoading) return { status: 'loading', label: 'Checking...', color: 'bg-warning' };
+     if (healthError) return { status: 'offline', label: 'Backend Offline', color: 'bg-destructive' };
+     if (health?.status === 'ok') return { status: 'online', label: 'Backend Online', color: 'bg-success' };
+     return { status: 'unknown', label: 'Unknown', color: 'bg-muted-foreground' };
+   }, [health, healthLoading, healthError]);
+   
+   const aiStatus = useMemo(() => {
+     if (ollamaLoading) return { status: 'loading', label: 'Checking Ollama...', detail: '', color: 'bg-warning' };
+     if (ollamaError || !ollamaStatus?.is_available) return { 
+       status: 'offline', 
+       label: 'Ollama Offline', 
+       detail: 'Run: ollama serve',
+       color: 'bg-destructive' 
+     };
+     return { 
+       status: 'online', 
+       label: 'Ollama Ready', 
+       detail: ollamaStatus?.active_model || 'localhost:11434',
+       color: 'bg-success' 
+     };
+   }, [ollamaStatus, ollamaLoading, ollamaError]);
 
   return (
     <aside 
@@ -93,18 +122,48 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
 
       {/* AI Status */}
       <div className="p-3 border-t border-sidebar-border">
+        {/* Backend Status */}
+        <div className={cn(
+          "flex items-center gap-2 px-3 py-2 rounded-lg mb-2",
+          collapsed && "justify-center"
+        )}>
+          <div className="relative">
+            <Server className="w-4 h-4 text-muted-foreground" />
+            <span className={cn(
+              "absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full",
+              backendStatus.color,
+              backendStatus.status === 'loading' && "animate-pulse"
+            )} />
+          </div>
+          {!collapsed && (
+            <div className="flex flex-col">
+              <span className="text-xs font-medium text-foreground">{backendStatus.label}</span>
+              <span className="text-[10px] text-muted-foreground">localhost:8000</span>
+            </div>
+          )}
+        </div>
+        
+        {/* Ollama Status */}
         <div className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg bg-sidebar-accent",
           collapsed && "justify-center"
         )}>
           <div className="relative">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-success rounded-full animate-pulse" />
+            {aiStatus.status === 'offline' ? (
+              <AlertCircle className="w-4 h-4 text-destructive" />
+            ) : (
+              <Sparkles className="w-4 h-4 text-primary" />
+            )}
+            <span className={cn(
+              "absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full",
+              aiStatus.color,
+              aiStatus.status === 'loading' && "animate-pulse"
+            )} />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-xs font-medium text-foreground">Ollama Ready</span>
-              <span className="text-[10px] text-muted-foreground">localhost:11434</span>
+              <span className="text-xs font-medium text-foreground">{aiStatus.label}</span>
+              <span className="text-[10px] text-muted-foreground">{aiStatus.detail}</span>
             </div>
           )}
         </div>

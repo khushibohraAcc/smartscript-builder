@@ -42,4 +42,7 @@ export const API_ENDPOINTS = {
   EXECUTIONS: '/executions',
   EXECUTION: (id: string) => `/executions/${id}`,
   EXECUTION_WS: (id: string) => `/ws/execution/${id}`,
+   
+   // Dashboard
+   DASHBOARD_STATS: '/dashboard/stats',
 } as const;

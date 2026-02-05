@@ -20,6 +20,7 @@ import type {
   HealthResponse,
   OllamaStatus,
   ApiError,
+   DashboardStats,
 } from './types';
 
 class ApiClient {
@@ -220,6 +221,14 @@ class ApiClient {
     const endpoint = query ? `${API_ENDPOINTS.EXECUTIONS}?${query}` : API_ENDPOINTS.EXECUTIONS;
     return this.get<ExecutionListItem[]>(endpoint);
   }
+   
+   // ============================================================================
+   // Dashboard Endpoints
+   // ============================================================================
+ 
+   async getDashboardStats(days: number = 30): Promise<DashboardStats> {
+     return this.get<DashboardStats>(`${API_ENDPOINTS.DASHBOARD_STATS}?days=${days}`);
+   }
 }
 
 // Custom error class for API errors
